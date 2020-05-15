@@ -1,0 +1,8 @@
+{
+    
+    "db_name": "plm_db",
+    "user": "plm_main",
+    "password": "plm_pswd",
+    "host": "127.0.0.1",
+    "port": "5433"
+}
