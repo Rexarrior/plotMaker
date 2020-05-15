@@ -7,7 +7,7 @@ urlpatterns = [
     path('get_exprs/', get_expressions),
     path('get_expr_status/', get_expr_status),
     path('get_expr_solutions/', get_expr_solution),
-    path('get_get_exrp_variables/', get_exrp_variables),
+    path('get_exrp_variables/', get_exrp_variables),
     path('change_var/', post_changed_variable),
     
 ]

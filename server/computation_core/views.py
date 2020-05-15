@@ -20,8 +20,9 @@ def post_computation_task(request):
                            min=var['min'],
                            max=var['max'],
                            step=var['step']
-                            )
+                           )
         new_var.save()
+    
     return HttpResponse(status=200)
 
 
