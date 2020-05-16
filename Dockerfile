@@ -12,8 +12,10 @@ RUN python3 -V
 RUN pip3 install -r ./requirements.txt
 RUN chmod 777 ./run.sh
 
+
+RUN export DEBIAN_FRONTEND=noninteractive
+RUN ln -fs /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 RUN apt-get install -y tzdata
-RUN echo "Russia/Moscow" | tee /etc/timezone
 RUN dpkg-reconfigure --frontend noninteractive tzdata
 RUN apt-get install -y nginx
 RUN apt-get install -y ufw
