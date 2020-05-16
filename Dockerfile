@@ -3,7 +3,7 @@ ADD . /src
 WORKDIR /src
 
 COPY ./server /root/plotMaker/server
-COPY ./frontend/plot-maker/dist /var/www/plotMaker/static
+COPY ./frontend/plot-maker/static /var/www/plotMaker/static
 
 RUN apt-get update
 RUN apt-get install -y python3

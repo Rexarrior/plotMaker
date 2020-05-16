@@ -1,4 +1,4 @@
-const server_url = 'http://188.119.67.69:8000/api/';
+var server_url = "http://"+window.location.hostname + "/api";
 // const server_url = '/api/';
 
 export default {
