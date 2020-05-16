@@ -1,5 +1,5 @@
-django==3.0.6
-numexpr==2.7.1
+django
+numexpr
 psycopg2
 django-cors-headers
 requests

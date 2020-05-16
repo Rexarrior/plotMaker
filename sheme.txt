@@ -1,0 +1,10 @@
+1.  tech: postgres, django, vue, ansible
+2. plan:
+2.1. logic core
+2.2 ORM core
+2.3 django core
+2.4 UI core
+2.5 tests
+2.6 CI\CD
+2.7 ansible test script
+
