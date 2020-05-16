@@ -22,7 +22,7 @@ RUN apt-get install -y ufw
 RUN ufw allow 'Nginx Full'
 COPY plotMaker.conf /etc/nginx/sites-available/plotMaker.conf
 RUN rm /etc/nginx/sites-enabled/default
-RUN li -s /etc/nginx/sites-available/plotMaker.conf /etc/nginx/sites-enabled/plotMaker.conf
+RUN ln -s /etc/nginx/sites-available/plotMaker.conf /etc/nginx/sites-enabled/plotMaker.conf
 RUN nginx -t
 RUN systemctl restart nginx
 
