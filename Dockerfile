@@ -25,9 +25,9 @@ RUN rm /etc/nginx/sites-enabled/default
 RUN ln -s /etc/nginx/sites-available/plotMaker.conf /etc/nginx/sites-enabled/plotMaker.conf
 RUN nginx -t
 RUN apt-get install -y systemd
-RUN systemctl enable nginx
+RUN service nginx start
 
 RUN python3 -m pip install gunicorn
 COPY gunicorn.service /etc/systemd/system/gunicorn.service
-RUN systemctl enable gunicorn
+RUN service gunicorn start
 
