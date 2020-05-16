@@ -34,7 +34,7 @@ def post_computation_task(request):
     expr.save()
     variables = task['variables']
     run_subprocess(task['text'], variables,
-                   expr.pk, "http://127.0.0.1:8000/post_expr_solutions/")
+                   expr.pk, "http://127.0.0.1:8000/api/post_expr_solutions/")
     
     for var in variables:
         new_var = Variable(expr_fk=expr,
