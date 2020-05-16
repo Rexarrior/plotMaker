@@ -29,6 +29,7 @@ RUN apt-get install -y systemd
 
 RUN python3 -m pip install gunicorn
 # COPY gunicorn.service /etc/systemd/system/gunicorn.service
-CMD gunicorn server.server.wsgi:application --bind 0.0.0.0:$PORT
+WORKDIR /server
+CMD gunicorn server.wsgi:application --bind 0.0.0.0:$PORT
 
 
