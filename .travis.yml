@@ -3,6 +3,13 @@ sudo: required
 services:
   - docker
 
+addons:
+  postgresql: "9.6"
+
+python:
+  - "3.6"
+
+
 language: python
 
 script:
