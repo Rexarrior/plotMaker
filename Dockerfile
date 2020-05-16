@@ -25,9 +25,10 @@ RUN rm /etc/nginx/sites-enabled/default
 RUN ln -s /etc/nginx/sites-available/plotMaker.conf /etc/nginx/sites-enabled/plotMaker.conf
 RUN nginx -t
 RUN apt-get install -y systemd
-RUN nginx &
+# RUN nginx &
 
 RUN python3 -m pip install gunicorn
 # COPY gunicorn.service /etc/systemd/system/gunicorn.service
-RUN  /usr/local/bin/gunicorn --access-logfile - --workers 3 --bind 0.0.0.0:8000 server.wsgi:application &
+CMD gunicorn hello_django.wsgi:application --bind 0.0.0.0:$PORT
+
 
