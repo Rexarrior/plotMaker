@@ -24,6 +24,7 @@ COPY plotMaker.conf /etc/nginx/sites-available/plotMaker.conf
 RUN rm /etc/nginx/sites-enabled/default
 RUN ln -s /etc/nginx/sites-available/plotMaker.conf /etc/nginx/sites-enabled/plotMaker.conf
 RUN nginx -t
+RUN apt-get install -y systemd
 RUN systemctl restart nginx
 
 RUN apt-get install -y gunicorn3
