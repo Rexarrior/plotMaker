@@ -1,5 +1,6 @@
 from django.urls import include, path
 from computation_core.views import *
+
 urlpatterns = [
     path('signup/', post_new_user),
     path('signin/', post_login),
@@ -8,6 +9,7 @@ urlpatterns = [
     path('get_exprs/', get_expressions),
     path('get_expr_status/', get_expr_status),
     path('get_expr_solutions/', get_expr_solution),
+    path('post_expr_solutions/', post_expr_solution),
     path('get_expr_variables/', get_exrp_variables),
     path('change_var/', post_changed_variable),
 ]

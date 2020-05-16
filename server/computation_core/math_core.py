@@ -1,4 +1,8 @@
 import numexpr as ne
+import sys
+import requests
+import json
+import subprocess
 
 
 class Math_var(object):
@@ -27,24 +31,71 @@ def evaluate_math_expr(expr, arg_dict):
     return True, res
 
 
-def compute_math(expr, vars):
-    local_dict = {var.name: var.min for var in vars}
+def compute_math(expr, mvars):
+    local_dict = {var.name: var.min for var in mvars}
     index = 0
     
-    while(local_dict[vars[-1].name] <= vars[-1].max):
+    while(local_dict[mvars[-1].name] <= mvars[-1].max):
         curr_res = evaluate_math_expr(expr, local_dict)
-        if (not curr_res):
+        if (not curr_res[0]):
             raise Exception("evaluation of expression has failed")      
-        yield (local_dict.copy(), curr_res[1])
+        yield (local_dict.copy(), curr_res[1].tolist())
         is_next_finding = True
         while(is_next_finding):
-            name = vars[index].name
-            local_dict[name] += vars[index].step
-            if (local_dict[name] > vars[index].max):
-                local_dict[name] = vars[index].min
-                index += 1
-                if (index == len(vars)):
+            name = mvars[index].name
+            local_dict[name] += mvars[index].step
+            if (local_dict[name] > mvars[index].max):
+                if (index >= len(mvars)-1):
                     break
+                local_dict[name] = mvars[index].min
+                index += 1
+                
             else:
                 index = 0
                 is_next_finding = False
+
+
+def mvars_from_json(json_mvars):
+    mvars = json.loads(json_mvars)
+    res = [Math_var(mvar['name'],
+                    mvar['min'],
+                    mvar['max'],
+                    mvar['step']
+                    ) for mvar in mvars]
+    return res
+
+
+def run_subprocess(expr, mvars, expr_pk, server_url):
+    mvars_json = json.dumps(mvars)
+    return subprocess.Popen([f'python3', __file__,
+                            expr, mvars_json,
+                            str(expr_pk), server_url
+                             ])
+
+
+def main(argv):
+    
+    expression = argv[1]
+    mvars_json = argv[2]
+    mvars = mvars_from_json(mvars_json)
+    expr_pk = int(argv[3])
+    server_url = argv[4]
+    results = list(compute_math(expression, mvars))
+    
+    print(results)
+    params = {'pk': expr_pk, 'results': json.dumps(results)}
+    requests.post(url=server_url, json=params)
+
+
+if __name__ == '__main__':
+    main(sys.argv)
+    # expr = "x**2 + y**2"
+    # mvars = [{'name': 'x', 'min': 1, 'max': 2, 'step': 1},
+    #          {'name': 'y', 'min': 1, 'max': 3, 'step': 1},
+    #          ]
+    # mvars_json = json.dumps(mvars)
+    # expr_pk = str(8)
+    # server_addr = "localhost:8000/post_expr_solutions/"
+    # res = list(compute_math(expr, mvars_obj))
+    # print(run_subprocess(expr, mvars, expr_pk, server_addr).stdout)
+    pass

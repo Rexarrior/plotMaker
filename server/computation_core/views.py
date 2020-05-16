@@ -4,6 +4,7 @@ import json
 from computation_core.models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
+from computation_core.math_core import run_subprocess
 
 
 def djObject_to_json(obj):
@@ -32,7 +33,9 @@ def post_computation_task(request):
                       status=Expression.COMPUTING)
     expr.save()
     variables = task['variables']
-    print(variables)
+    run_subprocess(task['text'], variables,
+                   expr.pk, "http://127.0.0.1:8000/post_expr_solutions/")
+    
     for var in variables:
         new_var = Variable(expr_fk=expr,
                            name=var['name'],
@@ -41,8 +44,8 @@ def post_computation_task(request):
                            step=var['step']
                            )
         new_var.save()
-    
-    return HttpResponse(status=200)
+    data = json.dumps({'pk': expr.pk})
+    return HttpResponse(data, status=200)
 
 
 @csrf_exempt
@@ -76,6 +79,20 @@ def get_expr_solution(request):
     response = HttpResponse(json_str, status=200)
     return response
 
+
+@csrf_exempt
+def post_expr_solution(request):
+    data = json.loads(request.body.decode('utf-8'))
+    expr = Expression.objects.get(pk=data['pk'])
+    results = json.loads(data['results'])
+    for res in results:
+        new_res = Result(expr_fk = expr, args=json.dumps(res[0]),
+                         result=res[1])
+        new_res.save()
+    expr.status = Expression.READY
+    expr.save()
+    return HttpResponse(status=200)
+    
 
 @csrf_exempt
 def get_exrp_variables(request):

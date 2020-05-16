@@ -26,8 +26,8 @@
   
   <div v-if="IsAuthorized">
     <b-jumbotron  class="expr-list-card" lead="Список рассчетов">
-         <p>{{DEBUG_OUT}}</p>
-         <b-card-group v-for="expr in Expresions" :key="expr.id">
+         <!-- <p>{{DEBUG_OUT}}</p> -->
+         <b-card-group v-for="expr in Expressions" :key="expr.id">
          <b-card class="expr-card">
            <b-card-header >
               <b-link @click="pickExpr(expr)">{{expr.fields.name}}</b-link>
@@ -90,8 +90,8 @@
             <b-button type="reset" variant="danger" class="control-button">Очистить</b-button>
           </b-form>
         </b-tab>
-        <b-tab title="Результаты" >
-           <b-table hover :items="Results"></b-table>
+        <b-tab title="Результаты" v-if="IsResults" >
+           <b-table hover :items="Results" class="results-table"></b-table>
           </b-tab>
       </b-tabs>
     </b-jumbotron>
@@ -119,9 +119,10 @@ export default {
       UserName: "SampleUser",
       UserId:1,
       IsAuthorized: true,
-      Expresions:[],
+      Expressions:[],
       RawVariables:"",
       Results: [],
+      IsResults: false,
       Expression:{
           name: "",
           text: "",
@@ -161,12 +162,10 @@ export default {
       let data = {expr: this.Expression, user_id: this.UserId}
       let instance = this;
       axios.post(consts.new_expression_url, data)
-           .then(function(request){
-              //console.log(request);
-              if (request.status != 200)
-                alert("ERROR - status isn't OK");
+           .then(function(responce){
+              instance.Expression.pk =  responce.data.pk;
               instance.loadExprs();
-              instance.checkResult()
+              instance.checkResult();
             });
            
 
@@ -175,11 +174,13 @@ export default {
       evt.preventDefault();
       this.Expression.name = "";
       this.Expression.text = "";
-      this.Expresion.pk = undefined;
-      this.Expresions.status = undefined;
+      this.Expression.pk = undefined;
+      this.Expression.status = undefined;
       this.Expression.variables = [];
       this.RawVariables = "";
       this.Results = [];
+      this.IsResults = true;
+
      },
 
 
@@ -205,14 +206,27 @@ export default {
              });
     },
     deleteExpr(arg){
+      if (arg.pk == this.Expression.pk)
+      {
+          this.Expression.name = "";
+          this.Expression.text = "";
+          this.Expression.pk = undefined;
+          this.Expression.status = undefined;
+          this.Expression.variables = [];
+          this.RawVariables = "";
+          this.Results = [];
+          this.IsResults = false;
+      }
       let instance = this;
       axios.post(consts.delete_expression_url, {'pk':arg.pk}).then(function(){
+             
             instance.loadExprs();
       });
      
 
     },
     loadExprs(){
+      
       let instance = this;
       axios.request({
         'url':consts.get_expressions_url,
@@ -220,7 +234,7 @@ export default {
         'method':'GET'
       })
       .then(function(response){
-        instance.Expresions = response.data;
+        instance.Expressions = response.data;
       });
     },
     expressionUpdateLoop(){
@@ -228,7 +242,7 @@ export default {
       setTimeout(this.expressionUpdateLoop, consts.update_timedout);
     },
     checkResult(){
-      if (this.Expression.pk === undefined)
+      if (this.Expression === undefined || this.Expression.pk === undefined)
       {
         return;
       }
@@ -246,6 +260,7 @@ export default {
                 formatted_results.push(results[i][0]);
               }
               instance.Results = formatted_results;
+              instance.IsResults = true;
             });
           }
       });
@@ -284,7 +299,7 @@ export default {
 
 
 .expr-list-card{
-  position: absolute;
+  position: fixed;
   left: 5%;
   top: 10%;
   padding-bottom: 10%;
@@ -298,10 +313,14 @@ export default {
   position: absolute;
   width: 50%;
   height: 70%;
+  max-height: 70%;
   left:35%;
   top:10%;
   padding-bottom: 10%;
 }
 
-
+.results-table{
+  overflow: scroll;
+  height: 60%;
+}
 </style>
