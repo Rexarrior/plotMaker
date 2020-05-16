@@ -1,5 +1,5 @@
-// const server_url = 'http://188.119.67.69:8000/api/';
-const server_url = '/api/';
+const server_url = 'http://188.119.67.69:8000/api/';
+// const server_url = '/api/';
 
 export default {
     new_expression_url : `${server_url}/new_expr/`,
