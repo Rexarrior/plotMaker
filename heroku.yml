@@ -2,4 +2,4 @@ build:
   docker:
     web: Dockerfile
 run:
-  web:
+  web: bundle exec puma -C config/puma.rb
