@@ -17,7 +17,7 @@ def delete_expr(request):
     pk = data['pk']
     founded = Expression.objects.filter(pk=pk)
     if (len(founded) > 0):
-        print(f"{len(founded)} deleted")
+        print("{} deleted".format(len(founded)))
         founded.delete()
     return HttpResponse(status=200)
 
@@ -51,7 +51,7 @@ def post_computation_task(request):
 @csrf_exempt
 def get_expressions(request):
     user_id = request.GET.get('user_id')
-    print(f'user_id={user_id}')
+    print('user_id={}'.format(user_id))
     exprs = Expression.objects.filter(user_id=user_id)
     json_string = djObject_to_json(exprs)
     response = HttpResponse(json_string)

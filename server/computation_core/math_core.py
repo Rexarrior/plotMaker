@@ -67,7 +67,7 @@ def mvars_from_json(json_mvars):
 
 def run_subprocess(expr, mvars, expr_pk, server_url):
     mvars_json = json.dumps(mvars)
-    return subprocess.Popen([f'python3', __file__,
+    return subprocess.Popen(['python3', __file__,
                             expr, mvars_json,
                             str(expr_pk), server_url
                              ])
