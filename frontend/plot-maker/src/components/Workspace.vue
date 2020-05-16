@@ -90,8 +90,8 @@
             <b-button type="reset" variant="danger" class="control-button">Очистить</b-button>
           </b-form>
         </b-tab>
-        <b-tab title="Результаты" v-if="IsResults" >
-           <b-table hover :items="Results" class="results-table"></b-table>
+        <b-tab title="Результаты" v-if="IsResults" class="results-table">
+           <b-table hover :items="Results" ></b-table>
           </b-tab>
       </b-tabs>
     </b-jumbotron>
@@ -320,7 +320,7 @@ export default {
 }
 
 .results-table{
-  overflow: scroll;
-  height: 60%;
+  overflow:scroll ;
+  
 }
 </style>

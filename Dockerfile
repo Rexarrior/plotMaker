@@ -29,5 +29,4 @@ RUN systemctl enable nginx
 
 RUN python3 -m pip install gunicorn
 COPY gunicorn.service /etc/systemd/system/gunicorn.service
-RUN systemctl daemon-reload
 RUN systemctl enable gunicorn
