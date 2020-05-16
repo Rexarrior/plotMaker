@@ -1,7 +1,10 @@
-FROM alpine:3.5
-RUN apk add --update python3 py-pip
-COPY requirements.txt /src/requirements.txt
-RUN pip3 install -r /src/requirements.txt
-COPY server /src/server
-COPY run.sh /src/run.sh
-CMD ./src/run.sh
+FROM ubuntu
+ADD . /src
+WORKDIR /src
+RUN apt-get update
+RUN apt-get install -y python3
+RUN apt-get install -y python3-pip
+RUN python3 -V
+RUN pip3 install -r ./requirements.txt
+RUN chmod 777 ./run.sh
+CMD ["./run.sh"]
