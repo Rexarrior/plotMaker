@@ -5,5 +5,5 @@ if [ "$TRAVIS_BRANCH" = "master" ]; then
 else
     TAG="$TRAVIS_BRANCH"
 fi
-docker build -f Dockerfile -t plotmaker ./
+docker build -f Dockerfile -t rexarrior/plotmaker ./
 docker push rexarrior/plotmaker
