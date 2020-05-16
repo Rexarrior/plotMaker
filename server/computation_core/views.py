@@ -3,17 +3,36 @@ from django.http import HttpResponse
 import json
 from computation_core.models import *
 from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
+
+
+def djObject_to_json(obj):
+    return serializers.serialize('json', obj)
+
+
+@csrf_exempt
+def delete_expr(request):
+    data = json.loads(request.body)
+    pk = data['pk']
+    founded = Expression.objects.filter(pk=pk)
+    if (len(founded) > 0):
+        print(f"{len(founded)} deleted")
+        founded.delete()
+    return HttpResponse(status=200)
 
 
 @csrf_exempt
 def post_computation_task(request):
-    json_string = request.POST.get('json_data')
-    task = json.loads(json_string)
-    expr = Expression(text=task['expression'],
-                      name=task['expression_name'],
-                      user_id=task['user_id'])
+    json_string = request.body
+    data = json.loads(json_string)
+    task = data['expr']
+    expr = Expression(text=task['text'],
+                      name=task['name'],
+                      user_id=data['user_id'],
+                      status=Expression.COMPUTING)
     expr.save()
     variables = task['variables']
+    print(variables)
     for var in variables:
         new_var = Variable(expr_fk=expr,
                            name=var['name'],
@@ -29,43 +48,45 @@ def post_computation_task(request):
 @csrf_exempt
 def get_expressions(request):
     user_id = request.GET.get('user_id')
+    print(f'user_id={user_id}')
     exprs = Expression.objects.filter(user_id=user_id)
-    json_string = json.dumps(exprs)
+    json_string = djObject_to_json(exprs)
     response = HttpResponse(json_string)
     return response
 
 
 @csrf_exempt
 def get_expr_status(request):
-    expr_id = request.GET.get('expression_id')
-    expression = Expression.objects.get(id=expr_id)
-    response = HttpResponse(status=200)
-    response['expression_status'] = expression.status
+    pk = request.GET.get('pk')
+    expression = Expression.objects.get(pk=pk)
+    jsonString = json.dumps({'status': expression.status})
+    response = HttpResponse(jsonString, status=200)
     return response
 
 
 @csrf_exempt
 def get_expr_solution(request):
-    expr_id = request.GET.get('expression_id')
-    expr = Expression.objects.get(id=expr_id)
+    pk = request.GET.get('pk')
+    expr = Expression.objects.get(pk=pk)
     results = Result.objects.filter(expr_fk=expr)
     resp_results = []
     for res in results:
         resp_results.append((json.loads(res.args), res.result))
-    response = HttpResponse(status=200)
-    response.content = json.dumps(resp_results)
+    json_str = json.dumps(resp_results)
+    response = HttpResponse(json_str, status=200)
+    return response
 
 
 @csrf_exempt
 def get_exrp_variables(request):
-    expr_id = request.GET.get('expression_id')
-    expr = Expression.objects.get(id=expr_id)
+    pk = request.GET.get('pk')
+    expr = Expression.objects.get(pk=pk)
     variables = Variable.objects.filter(expr_fk=expr)
     resp_vars = []
     for var in variables:
         resp_vars.append(var)
     response = HttpResponse(status=200)
-    response.content = json.dumps(resp_vars)
+    response.content = djObject_to_json(resp_vars)
     return response
 
 

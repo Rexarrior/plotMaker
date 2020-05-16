@@ -26,68 +26,74 @@
   
   <div v-if="IsAuthorized">
     <b-jumbotron  class="expr-list-card" lead="Список рассчетов">
-         <!-- <p>{{DEBUG_OUT}}</p> -->
+         <p>{{DEBUG_OUT}}</p>
          <b-card-group v-for="expr in Expresions" :key="expr.id">
          <b-card class="expr-card">
-           <b-card-header>
-              {{expr.name}}
+           <b-card-header >
+              <b-link @click="pickExpr(expr)">{{expr.fields.name}}</b-link>
            </b-card-header>
            <b-card-body>
-             <p>{{expr.text}}</p>
+             <p>{{expr.fields.text}}</p>
            </b-card-body>
            <b-card-footer>
-             <b-button @click="pickExpr(arg, event)" variant="outline-primary">
-               Выбрать
-             </b-button>
+             <b-link @click="deleteExpr(expr)">Удалить</b-link>
            </b-card-footer>
+           
          </b-card>
          </b-card-group>
     </b-jumbotron>
 
     <b-jumbotron class="expr-work-area" >
-      <b-form @submit="onSubmit" @reset="onReset">
-      <b-form-group
-        id="input-group-1"
-        label="Вычислить"
-        label-for="input-1"
-        description="Выражение, которое будет вычислено"
-      >
-        <b-form-input
-          id="input-1"
-          v-model="Expression.text"
-          type="text"
-          required
-          placeholder="sqrt(x**2 + y**2)"
-        ></b-form-input>
-      </b-form-group>
+      <b-tabs content-class="mt-3">
+        <b-tab title="Выражение" active>
+          <b-form @submit="onSubmit" @reset="onReset">
+          <b-form-group
+            id="input-group-1"
+            label="Вычислить"
+            label-for="input-1"
+            description="Выражение, которое будет вычислено"
+          >
+            <b-form-input
+              id="input-1"
+              v-model="Expression.text"
+              type="text"
+              required
+              placeholder="sqrt(x**2 + y**2)"
+            ></b-form-input>
+          </b-form-group>
 
-      <b-form-group id="input-group-2" label="Описание выражения" label-for="input-2">
-        <b-form-input
-          id="input-2"
-          v-model="Expression.name"
-          required
-          placeholder="Distance"
-        ></b-form-input>
-      </b-form-group>
+          <b-form-group id="input-group-2" label="Название выражения" label-for="input-2">
+            <b-form-input
+              id="input-2"
+              v-model="Expression.name"
+              required
+              placeholder="Distance"
+            ></b-form-input>
+          </b-form-group>
 
-      <b-form-group id="input-group-3" label="Список переменных" label-for="input-2">
-        <b-form-input
-          id="input-2"
-          v-model="RawVariables"
-          required
-          placeholder="x:1,0.01, 10; y:-100, 10, 100; "
-          description="Границы изменения переменных в выражении"
+          <b-form-group id="input-group-3" label="Список переменных" label-for="input-2">
+            <b-form-input
+              id="input-2"
+              v-model="RawVariables"
+              required
+              placeholder="x:1,0.01, 10; y:-100, 10, 100; "
+              description="Границы изменения переменных в выражении"
 
-        ></b-form-input>
-      </b-form-group>
+            ></b-form-input>
+          </b-form-group>
 
-      
-      
+          
+          
 
-        <b-button type="submit" variant="primary" class="control-button">Вычислить</b-button>
-        <br>
-        <b-button type="reset" variant="danger" class="control-button">Новое выражение</b-button>
-    </b-form>
+            <b-button type="submit" variant="primary" class="control-button">Вычислить</b-button>
+            <br>
+            <b-button type="reset" variant="danger" class="control-button">Очистить</b-button>
+          </b-form>
+        </b-tab>
+        <b-tab title="Результаты" >
+           <b-table hover :items="Results"></b-table>
+          </b-tab>
+      </b-tabs>
     </b-jumbotron>
   </div>
   
@@ -103,7 +109,6 @@
 import axios from "axios"
 import consts from "../consts"
 import { setTimeout } from 'timers';
-import func from './vue-temp/vue-editor-bridge';
 
 
 export default {
@@ -112,15 +117,20 @@ export default {
   data: function () {
     return {
       UserName: "SampleUser",
+      UserId:1,
       IsAuthorized: true,
       Expresions:[],
       RawVariables:"",
+      Results: [],
       Expression:{
           name: "",
           text: "",
           variables: [],
+          pk: undefined,
+          status: undefined,
+          
         },
-      //DEBUG_OUT:"",
+      DEBUG_OUT:"",
     }
     
   },
@@ -128,9 +138,11 @@ export default {
   methods: {
     onSubmit(evt) {
       evt.preventDefault();
-      let parts = this.RawVariables.split(";");
       
-      for (let i = 0; i < parts.length; i++)
+
+      let parts = this.RawVariables.split(";");
+      this.Expression.variables = [];
+      for (let i = 0; i < parts.length-1; i++)
       {
         let variable = {
           name:"",
@@ -144,15 +156,18 @@ export default {
         variable.min = parseInt(first_subparts[1]);
         variable.step = parseInt(subparts[1]);
         variable.max = parseInt(subparts[2]);
-        this. Expression.variables.push(variable);
+        this.Expression.variables.push(variable);
       }
-      let json = JSON.stringify(this.Expression);
-      axios.post(consts.new_expression_url, {"json_data": json})
+      let data = {expr: this.Expression, user_id: this.UserId}
+      let instance = this;
+      axios.post(consts.new_expression_url, data)
            .then(function(request){
               //console.log(request);
               if (request.status != 200)
                 alert("ERROR - status isn't OK");
-            })
+              instance.loadExprs();
+              instance.checkResult()
+            });
            
 
     },
@@ -160,25 +175,90 @@ export default {
       evt.preventDefault();
       this.Expression.name = "";
       this.Expression.text = "";
+      this.Expresion.pk = undefined;
+      this.Expresions.status = undefined;
       this.Expression.variables = [];
       this.RawVariables = "";
+      this.Results = [];
      },
-    pickExpr(event){
-      event.preventDefault();
-      //console.log("!!");
+
+
+    pickExpr(arg){
+        let instance = this;
+        axios.get(consts.get_expression_variables,
+                  {'params':{'pk':arg.pk}})
+             .then(function(response){
+                instance.Expression.name = arg.fields.name;
+                instance.Expression.text = arg.fields.text;
+                instance.Expression.pk = arg.pk;
+                instance.Expression.name = arg.fields.name;
+                instance.Expression.variables = response.data;
+                instance.Expression.status = arg.fields.status;
+                instance.Results = [];
+                instance.RawVariables = "";
+                for(let i = 0; i < instance.Expression.variables.length; i++)
+                {
+                  let variable = instance.Expression.variables[i]
+                  instance.RawVariables += `${variable.fields.name}: ${variable.fields.min}, ${variable.fields.step}, ${variable.fields.max}; `
+                }
+                instance.checkResult();
+             });
+    },
+    deleteExpr(arg){
+      let instance = this;
+      axios.post(consts.delete_expression_url, {'pk':arg.pk}).then(function(){
+            instance.loadExprs();
+      });
+     
+
+    },
+    loadExprs(){
+      let instance = this;
+      axios.request({
+        'url':consts.get_expressions_url,
+        'params':{'user_id':this.UserId},
+        'method':'GET'
+      })
+      .then(function(response){
+        instance.Expresions = response.data;
+      });
     },
     expressionUpdateLoop(){
-
-      axios.get(consts.get_expressions_url, {"user_id": 1})
-           .then(function(response){
-             this.DEBUG_OUT = response
-           });
-      setTimeout(expressionUpdateLoop, 15000);
+      this.loadExprs();
+      setTimeout(this.expressionUpdateLoop, consts.update_timedout);
+    },
+    checkResult(){
+      if (this.Expression.pk === undefined)
+      {
+        return;
+      }
+      let instance = this;
+      let params = {params: {'pk': this.Expression.pk}};
+      axios.get(consts.get_expression_status_url, params).then(function(responce){
+          if (responce.data.status == "RE")
+          {
+            axios.get(consts.get_expression_solutions, params).then(function(responce2){
+              let results = responce2.data;
+              let formatted_results = [];
+              for(let i =0; i < results.length; i++)
+              {
+                results[i][0]['Значение выражения'] = results[i][1];
+                formatted_results.push(results[i][0]);
+              }
+              instance.Results = formatted_results;
+            });
+          }
+      });
+    },
+    checkResultLoop(){
+      this.checkResult();
+      setTimeout(this.checkResultLoop, consts.update_timedout)
     }
   },
-  // created: function () {
-  //   expressionUpdateLoop();
-  // }
+  created: function () {
+    this.expressionUpdateLoop();
+    this.checkResultLoop();
+  }
 
 }
 </script>
@@ -211,6 +291,7 @@ export default {
   width: 25%;
   height: 70%;
   font-size: 20;
+  overflow: scroll;
 
 }
 .expr-work-area{
