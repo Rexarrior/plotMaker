@@ -28,6 +28,10 @@ RUN nginx -t
 RUN apt-get install -y systemd
 # RUN nginx &
 
+RUN export AWS_ACCESS_KEY_ID='AKIAIKLO3KKWZZNNNICQ'
+RUN export AWS_SECRET_ACCESS_KEY='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'
+RUN python3 -m pip install boto boto3 ansible
+
 RUN python3 -m pip install gunicorn
 # COPY gunicorn.service /etc/systemd/system/gunicorn.service
 CMD gunicorn server.wsgi:application --bind 0.0.0.0:$PORT
