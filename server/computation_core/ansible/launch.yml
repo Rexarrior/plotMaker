@@ -35,10 +35,10 @@
     
     
     - name: Run task 
-      aws_access_key: "AKIAIYFFVF5I3GDTPXKA"
-      aws_secret_key: "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"
-      command: "python3 ~/task.py {{ expr }} {{ mvars }} {{ expr_pk}} {{ expr_pk}} {server_url}"
-
+      command:
+        cmd: "python3 ~/task.py {{ expr }} {{ mvars }} {{ expr_pk}} {{ expr_pk}} {server_url}"
+        aws_access_key: "AKIAIYFFVF5I3GDTPXKA"
+        aws_secret_key: "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"
 
  
 
