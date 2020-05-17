@@ -5,6 +5,8 @@
 
     - name: Launch instance
       ec2:
+        aws_access_key: "AKIAIYFFVF5I3GDTPXKA"
+        aws_secret_key: "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"
         region: us-east-2
         key_name: main_pub
         instance_type: t2.micro
