@@ -73,6 +73,27 @@ def run_subprocess(expr, mvars, expr_pk, server_url):
                              ])
 
 
+def run_remote(expr, mvars, expr_pk, server_url):
+    mvars_json = json.dumps(mvars)
+    vmid = 1234543
+    cmd_parts = ['ansible-playbook',
+                 './core/ansible/launch.yml',
+                 '--extra-vars',
+                 'vmID=' + str(vmid),
+                 '--extra-vars',
+                 'expr=' + str(expr),
+                 '--extra-vars',
+                 'mvars=' + str(mvars_json),
+                 '--extra-vars',
+                 'expr_pk=' + str(expr_pk),
+                 '--extra-vars',
+                 'server_url=' + str(server_url)
+                 ]
+    launch_result = subprocess.Popen(' '.join(cmd_parts),
+                                     shell=True
+                                     )
+
+
 def main(argv):
     
     expression = argv[1]

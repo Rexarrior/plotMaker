@@ -1,0 +1,13 @@
+- name: Terminate instances
+  hosts: localhost
+  tasks:
+    - name: get ec2 instance id by its name tag
+      ec2_instance:
+         region: us-east-2
+         filters:
+            tag:Name: "{{ vmID }}"
+      register: instances
+   
+    - name: Run task on remote node
+      command: "python3 ~/task.py {{ expr }} {{ mvars }} {{ expr_pk}} {{ expr_pk}} {server_url}"
+      with_items: "{{instances.instances}}"

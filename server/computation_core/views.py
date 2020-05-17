@@ -4,7 +4,10 @@ import json
 from computation_core.models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
-from computation_core.math_core import run_subprocess
+from computation_core.math_core import run_subprocess, run_remote
+
+
+APP_POST_RESULT = "http://rexarrior.ml/api/post_expr_solutions/"
 
 
 def djObject_to_json(obj):
@@ -33,8 +36,8 @@ def post_computation_task(request):
                       status=Expression.COMPUTING)
     expr.save()
     variables = task['variables']
-    run_subprocess(task['text'], variables,
-                   expr.pk, "http://127.0.0.1:8000/api/post_expr_solutions/")
+    run_remote(task['text'], variables,
+               expr.pk, APP_POST_RESULT)
     
     for var in variables:
         new_var = Variable(expr_fk=expr,

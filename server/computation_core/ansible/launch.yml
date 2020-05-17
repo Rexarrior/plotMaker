@@ -1,0 +1,47 @@
+- hosts: localhost
+  gather_facts: False
+
+  tasks:
+
+    - name: Launch instance
+      ec2:
+        region: us-east-2
+        key_name: main_pub
+        instance_type: t2.micro
+        image: "ami-0d5d9d301c853a04a"
+        group: launch-wizard-1
+        exact_count: 1
+        wait: true
+        count_tag:
+          Name: "{{ vmID }}"
+        instance_tags:
+          Name: "{{ vmID }}"
+         
+      register: ec2
+    
+    - name: Install requests module to python3
+      command: python3 -m pip install requests numexpr    
+
+
+    - name: Copy task
+      copy:
+        src: /root/plotMaker/server/computation_core/math_core.py
+        dest: ~/task.py
+        mode: 0644 
+    
+    
+    - name: Run task 
+      command: "python3 ~/task.py {{ expr }} {{ mvars }} {{ expr_pk}} {{ expr_pk}} {server_url}"
+
+
+ 
+
+#- hosts: ec2hosts
+#  name: configuration play
+#  user: ec2-user
+#  gather_facts: true
+#
+#  tasks:
+#
+#     - name: Check NTP service
+#       service: name=ntpd state=started

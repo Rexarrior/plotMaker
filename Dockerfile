@@ -19,6 +19,7 @@ RUN apt-get install -y tzdata
 RUN dpkg-reconfigure --frontend noninteractive tzdata
 RUN apt-get install -y nginx
 RUN apt-get install -y ufw
+RUN apt-get install -y ansible
 RUN ufw allow 'Nginx Full'
 COPY plotMaker.conf /etc/nginx/sites-available/plotMaker.conf
 RUN rm /etc/nginx/sites-enabled/default
