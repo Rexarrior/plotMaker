@@ -5,6 +5,7 @@ from computation_core.models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 from computation_core.math_core import run_subprocess, run_remote
+import computation_core.utils as utils
 
 
 APP_POST_RESULT = "http://rexarrior.ml/api/post_expr_solutions/"
@@ -36,7 +37,15 @@ def post_computation_task(request):
                       status=Expression.COMPUTING)
     expr.save()
     variables = task['variables']
-    run_remote(task['text'], variables,
+    free_nodes = utils.get_free_work_nodes()
+    if (len(free_nodes) == 0):
+        utils.launch_new_work_node()
+        free_nodes = utils.get_free_work_nodes()
+    node = free_nodes[0]
+    node.is_free = False
+    node.expr_pk = expr.pk
+    node.save()
+    run_remote(node.vmid, task['text'], variables,
                expr.pk, APP_POST_RESULT)
     
     for var in variables:
@@ -89,11 +98,16 @@ def post_expr_solution(request):
     expr = Expression.objects.get(pk=data['pk'])
     results = json.loads(data['results'])
     for res in results:
-        new_res = Result(expr_fk = expr, args=json.dumps(res[0]),
+        new_res = Result(expr_fk=expr, args=json.dumps(res[0]),
                          result=res[1])
         new_res.save()
     expr.status = Expression.READY
     expr.save()
+    node = WorkNode.objects.get(expr_pk=expr.pk)
+    node.is_free = True
+    node.expr_pk = -1
+    node.save()
+    utils.terminate_extra_nodes()
     return HttpResponse(status=200)
     
 

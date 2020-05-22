@@ -32,9 +32,9 @@
         mode: 0644 
     
     
-    - name: Run task 
-      command:
-        cmd: "python3 ~/task.py \"{{ expr }}\" \"{{ mvars }}\" {{ expr_pk}} {{server_url}}"
+    # - name: Run task 
+    #   command:
+    #     cmd: "python3 ~/task.py \"{{ expr }}\" \"{{ mvars }}\" {{ expr_pk}} {{server_url}}"
 
  
 

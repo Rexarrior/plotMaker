@@ -36,3 +36,9 @@ class User(models.Model):
     user_id = models.IntegerField(auto_created=True)
     name = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
+
+
+class WorkNode:
+    vmid = models.IntegerField(unique=True)
+    is_free = models.BooleanField(default=True)
+    expr_pk = models.IntegerField(default=-1)
