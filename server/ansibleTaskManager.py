@@ -2,9 +2,6 @@
 import django
 import os
 import sys
-sys.path.append('../')
-
-
 from computation_core import utils
 import subprocess
 

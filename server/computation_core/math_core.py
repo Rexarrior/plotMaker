@@ -102,8 +102,7 @@ def run_remote(expr, mvars, expr_pk, server_url):
     expr = expr.replace(" ", "")       
     cmd_parts = [
         'python3',
-        '/root/plotMaker/server/' +
-        'computation_core/ansibleTaskManager.py',
+        '/root/plotMaker/server/ansibleTaskManager.py',
         '0',
         str(expr),
         str(mvars_coded),
