@@ -312,6 +312,7 @@ export default {
   padding-bottom: 10%;
   width: 25%;
   font-size: 20;
+  overflow: scroll
 
 }
 .expr-work-area{
@@ -322,6 +323,7 @@ export default {
   padding-bottom: 10%;
   width: 45%;
   font-size: 20;
+  overflow: scroll
 }
 
 .table-container {
