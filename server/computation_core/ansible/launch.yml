@@ -34,7 +34,7 @@
     
     - name: Run task 
       command:
-        cmd: "python3 ~/task.py {{ expr }} {{ mvars }} {{ expr_pk}} {{ expr_pk}} {server_url}"
+        cmd: "python3 ~/task.py \"{{ expr }}\" \"{{ mvars }}\" {{ expr_pk}} {{server_url}}"
 
  
 

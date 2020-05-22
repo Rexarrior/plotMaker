@@ -56,6 +56,7 @@ def compute_math(expr, mvars):
 
 
 def mvars_from_json(json_mvars):
+    json_mvars = json_mvars.replace("'", '"')
     mvars = json.loads(json_mvars)
     res = [Math_var(mvar['name'],
                     mvar['min'],
@@ -66,15 +67,38 @@ def mvars_from_json(json_mvars):
 
 
 def run_subprocess(expr, mvars, expr_pk, server_url):
-    mvars_json = json.dumps(mvars)
+    mvars_coded = encode_mvars(mvars)
     return subprocess.Popen(['python3', __file__,
-                            expr, mvars_json,
+                            expr, mvars_coded,
                             str(expr_pk), server_url
                              ])
 
 
+def encode_mvars(mvars):
+    return "---".join([f'{mvar["name"]}&' +
+                       f'{mvar["min"]}&' +
+                       f'{mvar["max"]}&' +
+                       f'{mvar["step"]}&'
+                       for mvar in mvars
+                       ])
+
+
+def decode_mvars(mvars_coded):
+    mvar_codes = mvars_coded.split("---")
+    res = []
+    for code in mvar_codes:
+        mvar_values = code.split("&")
+        res.append(Math_var(mvar_values[0],
+                            mvar_values[1],
+                            mvar_values[2],
+                            mvar_values[3]
+                            )
+                   )
+    return res
+
+
 def run_remote(expr, mvars, expr_pk, server_url):
-    mvars_json = json.dumps(mvars)
+    mvars_coded = encode_mvars(mvars)
     vmid = 1234543
     cmd_parts = ['ansible-playbook',
                  '/root/plotMaker/server/computation_core/ansible/launch.yml',
@@ -83,23 +107,24 @@ def run_remote(expr, mvars, expr_pk, server_url):
                  '--extra-vars',
                  'expr=' + '"' + str(expr) + '"',
                  '--extra-vars',
-                 'mvars=' + '"' + str(mvars_json) + '"',
+                 'mvars=' + '"' + str(mvars_coded) + '"',
                  '--extra-vars',
                  'expr_pk=' + str(expr_pk),
                  '--extra-vars',
                  'server_url=' + str(server_url),
                  
                  ]
+    print(f'run command: {str(cmd_parts)}')
     launch_result = subprocess.Popen(' '.join(cmd_parts),
                                      shell=True
                                      )
 
 
 def main(argv):
-
+    print(f"argv={str(argv)}")
     expression = argv[1]
-    mvars_json = argv[2]
-    mvars = mvars_from_json(mvars_json)
+    mvars_coded = argv[2]
+    mvars = decode_mvars(mvars_coded)
     expr_pk = int(argv[3])
     server_url = argv[4]
     results = list(compute_math(expression, mvars))
@@ -115,7 +140,7 @@ if __name__ == '__main__':
     # mvars = [{'name': 'x', 'min': 1, 'max': 2, 'step': 1},
     #          {'name': 'y', 'min': 1, 'max': 3, 'step': 1},
     #          ]
-    # mvars_json = json.dumps(mvars)
+    # mvars_coded = json.dumps(mvars)
     # expr_pk = str(8)
     # server_addr = "localhost:8000/post_expr_solutions/"
     # res = list(compute_math(expr, mvars_obj))
