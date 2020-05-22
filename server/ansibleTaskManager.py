@@ -21,8 +21,8 @@ def run_task_task(expr, mvars_coded, expr_pk, server_url):
                  '/root/plotMaker/server/' +
                  'computation_core/ansible/run_task.yml',               
                  '--extra-vars',
-                 '--extra-vars',
                  'vmID=' + str(node.vmid),
+                 '--extra-vars',
                  'expr=' + '"' + str(expr) + '"',
                  '--extra-vars',
                  'mvars=' + '"' + str(mvars_coded) + '"',
