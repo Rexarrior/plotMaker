@@ -5,8 +5,8 @@
 
     - name: Launch instance
       ec2:
-        aws_access_key: "AKIAIYFFVF5I3GDTPXKA"
-        aws_secret_key: "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"
+        aws_access_key: "{{ec2_access_key}}"
+        aws_secret_key: "{{ec2_secret_key}}"
         region: us-east-2
         key_name: main_pub
         instance_type: t2.micro
@@ -27,8 +27,8 @@
 
     - name: Copy task
       copy:
-        aws_access_key: "AKIAIYFFVF5I3GDTPXKA"
-        aws_secret_key: "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"
+        aws_access_key: "{{ec2_access_key}}"
+        aws_secret_key: "{{ec2_secret_key}}"
         src: /root/plotMaker/server/computation_core/math_core.py
         dest: ~/task.py
         mode: 0644 
@@ -37,8 +37,8 @@
     - name: Run task 
       command:
         cmd: "python3 ~/task.py {{ expr }} {{ mvars }} {{ expr_pk}} {{ expr_pk}} {server_url}"
-        aws_access_key: "AKIAIYFFVF5I3GDTPXKA"
-        aws_secret_key: "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"
+        aws_access_key: "{{ec2_access_key}}"
+        aws_secret_key: "{{ec2_secret_key}}"
 
  
 

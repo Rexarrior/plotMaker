@@ -81,9 +81,9 @@ def run_remote(expr, mvars, expr_pk, server_url):
                  '--extra-vars',
                  'vmID=' + str(vmid),
                  '--extra-vars',
-                 'expr=' +  '"' + str(expr) + '"',
+                 'expr=' + '"' + str(expr) + '"',
                  '--extra-vars',
-                 'mvars=' + '"' + str(mvars_json) +'"',
+                 'mvars=' + '"' + str(mvars_json) + '"',
                  '--extra-vars',
                  'expr_pk=' + str(expr_pk),
                  '--extra-vars',
@@ -96,7 +96,7 @@ def run_remote(expr, mvars, expr_pk, server_url):
 
 
 def main(argv):
-    
+
     expression = argv[1]
     mvars_json = argv[2]
     mvars = mvars_from_json(mvars_json)
