@@ -110,7 +110,7 @@ def run_remote(expr, mvars, expr_pk, server_url):
         server_url
     ]
     print(f'run command: {str(cmd_parts)}')
-    launch_result = subprocess.Popen(cmd_parts,
+    launch_result = subprocess.Popen(" ".join(cmd_parts),
                                      shell=True
                                      )
 
