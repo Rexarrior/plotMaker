@@ -2,11 +2,13 @@
 import django
 import os
 import sys
+sys.path.append('../')
+
+
 from computation_core import utils
 import subprocess
 
 
-sys.path.append('../')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
 django.setup()
 
@@ -20,7 +22,8 @@ def run_task_task(expr_pk, cmd_arg):
     node.is_free = False
     node.expr_pk = expr_pk
     node.save()
-    cmd_arg += '--extra-vars vmID=' + str(node.vmid),
+    cmd_arg += ' --extra-vars vmID=' + str(node.vmid),
+    print(f'run command: {cmd_arg}')
     launch_result = subprocess.Popen(cmd_arg,
                                      shell=True
                                      )
