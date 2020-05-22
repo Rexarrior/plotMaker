@@ -105,7 +105,7 @@ def run_remote(expr, mvars, expr_pk, server_url):
         '/root/plotMaker/server/ansibleTaskManager.py',
         '0',
         expr,
-        mvars_coded,
+        '"' + mvars_coded + '"',
         str(expr_pk),
         server_url
     ]

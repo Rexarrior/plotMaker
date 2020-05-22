@@ -46,7 +46,7 @@ def terminate_task():
 if __name__ == "__main__":
     argv = sys.argv
     print(f'argv={str(argv)}')
-    mode = int(argv[0])
+    mode = int(argv[1])
     if (mode == 0):
         run_task_task(argv[2],
                       argv[3],
