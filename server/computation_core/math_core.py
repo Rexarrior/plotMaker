@@ -77,7 +77,7 @@ def run_remote(expr, mvars, expr_pk, server_url):
     mvars_json = json.dumps(mvars)
     vmid = 1234543
     cmd_parts = ['ansible-playbook',
-                 './computation_core/ansible/launch.yml',
+                 '/root/plotMaker/server/computation_core/ansible/launch.yml',
                  '--extra-vars',
                  'vmID=' + str(vmid),
                  '--extra-vars',
