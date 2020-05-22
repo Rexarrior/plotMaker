@@ -38,7 +38,7 @@ def post_computation_task(request):
     expr.save()
     variables = task['variables']
     free_nodes = utils.get_free_work_nodes()
-    if (len(free_nodes) == 0):
+    if (len(free_nodes) <= 0):
         utils.launch_new_work_node()
         free_nodes = utils.get_free_work_nodes()
     node = free_nodes[0]

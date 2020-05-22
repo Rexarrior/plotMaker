@@ -26,7 +26,7 @@ def launch_new_work_node():
         '--extra-vars',
         'vmID=' + str(vmid),
     ]
-    subprocess.Popen(' '.join(cmd_parts), shell=True)
+    launch_result = subprocess.Popen(' '.join(cmd_parts), shell=True)
     WorkNode(vmid=vmid).save()
     return vmid
 
@@ -39,7 +39,7 @@ def terminate_work_node(vmid):
         '--extra-vars',
         'vmID=' + str(vmid),
     ]
-    subprocess.Popen(' '.join(cmd_parts), shell=True)
+    launch_result = subprocess.Popen(' '.join(cmd_parts), shell=True)
 
 
 def terminate_extra_nodes():
