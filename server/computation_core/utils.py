@@ -1,6 +1,7 @@
 import subprocess
 from computation_core.models import *
 import random as rnd
+import time
 
 
 PARAM_WORK_NODES_OPTIMUM = 3
@@ -28,6 +29,7 @@ def launch_new_work_node():
     ]
     launch_result = subprocess.Popen(' '.join(cmd_parts), shell=True)
     WorkNode(vmid=vmid).save()
+    time.sleep(5000)
     return vmid
 
 

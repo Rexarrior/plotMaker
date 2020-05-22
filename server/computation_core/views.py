@@ -7,7 +7,6 @@ from django.core import serializers
 from computation_core.math_core import run_subprocess, run_remote
 import computation_core.utils as utils
 
-
 APP_POST_RESULT = "http://rexarrior.ml/api/post_expr_solutions/"
 
 

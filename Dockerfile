@@ -28,8 +28,6 @@ RUN nginx -t
 RUN apt-get install -y systemd
 # RUN nginx &
 
-RUN export AWS_ACCESS_KEY_ID='AKIAIYFFVF5I3GDTPXKA'
-RUN export AWS_SECRET_ACCESS_KEY='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'
 RUN python3 -m pip install boto boto3 ansible
 
 RUN python3 -m pip install gunicorn
