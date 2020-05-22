@@ -3,7 +3,7 @@ from computation_core.models import *
 import random as rnd
 
 
-PARAM_WORK_NODES_OPTIMUM = 3
+PARAM_WORK_NODES_OPTIMUM = 1
 
 
 def get_new_vmid():
@@ -55,7 +55,7 @@ def terminate_extra_nodes_parallel():
     cmd_parts = [
         'python3',
         '/root/plotMaker/server/' +
-        'computation_core/ansibleTaskManager.py',
+        'ansibleTaskManager.py',
         '1'
     ]
     print(f'run command: {str(cmd_parts)}')
