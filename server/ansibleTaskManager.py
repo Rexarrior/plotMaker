@@ -2,12 +2,10 @@
 import django
 import os
 import sys
-from computation_core import utils
 import subprocess
-
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
 django.setup()
+from computation_core import utils
 
 
 def run_task_task(expr, mvars_coded, expr_pk, server_url):
@@ -46,12 +44,14 @@ def terminate_task():
 
 
 if __name__ == "__main__":
-    mode = int(sys.argv[1])
+    argv = sys.argv
+    print(f'argv={str(argv)}')
+    mode = int(argv[0])
     if (mode == 0):
-        run_task_task(sys.argv[2],
-                      sys.argv[3],
-                      int(sys.argv[4]),
-                      sys.argv[5]
+        run_task_task(argv[2],
+                      argv[3],
+                      int(argv[4]),
+                      argv[5]
                       )
     elif (mode == 1):
         terminate_task()

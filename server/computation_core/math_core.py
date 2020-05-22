@@ -104,13 +104,13 @@ def run_remote(expr, mvars, expr_pk, server_url):
         'python3',
         '/root/plotMaker/server/ansibleTaskManager.py',
         '0',
-        str(expr),
-        str(mvars_coded),
+        expr,
+        mvars_coded,
         str(expr_pk),
-        str(server_url)
+        server_url
     ]
     print(f'run command: {str(cmd_parts)}')
-    launch_result = subprocess.Popen(' '.join(cmd_parts),
+    launch_result = subprocess.Popen(cmd_parts,
                                      shell=True
                                      )
 
