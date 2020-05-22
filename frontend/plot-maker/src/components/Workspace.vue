@@ -414,5 +414,12 @@ export default {
  .table-container table tbody::-webkit-scrollbar-thumb {
      width: 1px;
 }
+
+.jumbotron.expr-work-area {
+    overflow: scroll;
+}
+.jumbotron.expr-list-card {
+    overflow: scroll;
+}
 /* END Adjustments for width and scrollbar */
 </style>
