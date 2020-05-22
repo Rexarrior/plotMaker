@@ -99,12 +99,12 @@ def decode_mvars(mvars_coded):
 
 def run_remote(expr, mvars, expr_pk, server_url):
     mvars_coded = encode_mvars(mvars)
-    expr = expr.replace(" ", "")       
+    expr = expr.replace(" ", "")
     cmd_parts = [
         'python3',
         '/root/plotMaker/server/ansibleTaskManager.py',
         '0',
-        expr,
+        '"' + expr + '"',
         '"' + mvars_coded + '"',
         str(expr_pk),
         server_url
