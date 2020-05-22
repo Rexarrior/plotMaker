@@ -36,7 +36,7 @@ def post_computation_task(request):
                       status=Expression.COMPUTING)
     expr.save()
     variables = task['variables']
-    run_remote(node.vmid, task['text'], variables,
+    run_remote(task['text'], variables,
                expr.pk, APP_POST_RESULT)
     
     for var in variables:

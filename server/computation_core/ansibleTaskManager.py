@@ -20,6 +20,7 @@ def run_task_task(expr_pk, cmd_arg):
     node.is_free = False
     node.expr_pk = expr_pk
     node.save()
+    cmd_arg += '--extra-vars vmID=' + str(node.vmid),
     launch_result = subprocess.Popen(cmd_arg,
                                      shell=True
                                      )

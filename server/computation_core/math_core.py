@@ -97,14 +97,12 @@ def decode_mvars(mvars_coded):
     return res
 
 
-def run_remote(vmid, expr, mvars, expr_pk, server_url):
+def run_remote(expr, mvars, expr_pk, server_url):
     mvars_coded = encode_mvars(mvars)
     expr = expr.replace(" ", "")
     cmd_parts = ['ansible-playbook',
                  '/root/plotMaker/server/' +
-                 'computation_core/ansible/run_task.yml',
-                 '--extra-vars',
-                 'vmID=' + str(vmid),
+                 'computation_core/ansible/run_task.yml',               
                  '--extra-vars',
                  'expr=' + '"' + str(expr) + '"',
                  '--extra-vars',
