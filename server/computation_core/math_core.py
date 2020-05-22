@@ -113,8 +113,16 @@ def run_remote(vmid, expr, mvars, expr_pk, server_url):
                  'expr_pk=' + str(expr_pk),
                  '--extra-vars',
                  'server_url=' + str(server_url),
-                 
                  ]
+    run_ansible_arg = ' '.join(cmd_parts)
+    cmd_parts = [
+        'python3',
+        '/root/plotMaker/server/' +
+        'computation_core/ansibleTaskManager.py',
+        '0',
+        str(expr_pk),
+        f'"{run_ansible_arg}"'
+    ]
     print(f'run command: {str(cmd_parts)}')
     launch_result = subprocess.Popen(' '.join(cmd_parts),
                                      shell=True
@@ -129,7 +137,6 @@ def main(argv):
     expr_pk = int(argv[3])
     server_url = argv[4]
     results = list(compute_math(expression, mvars))
-    
     print(results)
     params = {'pk': expr_pk, 'results': json.dumps(results)}
     requests.post(url=server_url, json=params)

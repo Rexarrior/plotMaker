@@ -49,3 +49,16 @@ def terminate_extra_nodes():
         return
     for i in range(0, len(free_nodes) - PARAM_WORK_NODES_OPTIMUM):
         terminate_work_node(free_nodes[i].vmid)
+
+
+def terminate_extra_nodes_parallel():
+    cmd_parts = [
+        'python3',
+        '/root/plotMaker/server/' +
+        'computation_core/ansibleTaskManager.py',
+        '1'
+    ]
+    print(f'run command: {str(cmd_parts)}')
+    launch_result = subprocess.Popen(' '.join(cmd_parts),
+                                     shell=True
+                                     )
