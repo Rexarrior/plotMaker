@@ -99,27 +99,16 @@ def decode_mvars(mvars_coded):
 
 def run_remote(expr, mvars, expr_pk, server_url):
     mvars_coded = encode_mvars(mvars)
-    expr = expr.replace(" ", "")
-    cmd_parts = ['ansible-playbook',
-                 '/root/plotMaker/server/' +
-                 'computation_core/ansible/run_task.yml',               
-                 '--extra-vars',
-                 'expr=' + '"' + str(expr) + '"',
-                 '--extra-vars',
-                 'mvars=' + '"' + str(mvars_coded) + '"',
-                 '--extra-vars',
-                 'expr_pk=' + str(expr_pk),
-                 '--extra-vars',
-                 'server_url=' + str(server_url),
-                 ]
-    run_ansible_arg = ' '.join(cmd_parts)
+    expr = expr.replace(" ", "")       
     cmd_parts = [
         'python3',
         '/root/plotMaker/server/' +
         'computation_core/ansibleTaskManager.py',
         '0',
+        str(expr),
+        str(mvars_coded),
         str(expr_pk),
-        f'"{run_ansible_arg}"'
+        str(server_url)
     ]
     print(f'run command: {str(cmd_parts)}')
     launch_result = subprocess.Popen(' '.join(cmd_parts),
